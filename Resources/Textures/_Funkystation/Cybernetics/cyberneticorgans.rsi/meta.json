@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "license": "CC-BY-SA-NC",
+  "copyright": "Sprites made by Gaesnek for Funky Station",
+  "size": {
+    "x": 32,
+    "y": 32
+  },
+    "states": [
+        {
+            "name": "cybernetic-stomach"
+        },
+		{
+            "name": "cybernetic-liver"
+        },
+        {
+            "name": "cybernetic-lung-l"
+        },
+        {
+            "name": "cybernetic-lung-r"
+        },
+        {
+            "name": "cybernetic-heart-on",
+            "delays": [
+                [
+                    0.6,
+                    0.1,
+                    0.1
+                ]
+            ]
+        }
+    ]
+}

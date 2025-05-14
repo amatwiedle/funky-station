@@ -1,0 +1,277 @@
+﻿- type: entity
+  id: BaseCyberneticOrgan
+  parent: BaseItem
+  abstract: true
+  components:
+  - type: Sprite
+    sprite: _Funkystation/Cybernetics/cyberneticorgans.rsi
+  - type: Organ
+  - type: Cybernetics
+  - type: Tag
+    tags:
+    - Organ
+
+# cybernetic eyes
+  # Port goob cybereyes over here to fix being able to eat them.
+- type: entity
+  parent: BaseCyberneticOrgan
+  abstract: true
+  id: BaseCyberneticEyes
+  components:
+  - type: Sprite
+    sprite: _EinsteinEngines/Mobs/Species/IPC/organs.rsi
+    state: "eyes"
+  - type: Organ
+    slotId: eyes
+  - type: Eyes
+  - type: Item
+    size: Small
+    shape:
+    - 0,0,1,0
+    heldPrefix: eyeballs
+  - type: Tag
+    tags:
+    - Eyes
+
+- type: entity
+  parent: BaseCyberneticEyes
+  id: BasicCyberneticEyes
+  name: cybernetic eyes
+  description: A pair of cybernetic eyes that enhance your vision, and protect you from eye damage.
+  components:
+  - type: Organ
+    onAdd:
+    - type: FlashImmunity
+    - type: EyeProtection
+
+- type: entity
+  parent: BaseCyberneticEyes
+  id: SecurityCyberneticEyes
+  name: cybernetic security eyes
+  description: A pair of cybernetic eyes that enhance your vision, featuring an integrated SecHUD.
+  components:
+  - type: Organ
+    onAdd:
+    - type: FlashImmunity
+    - type: EyeProtection
+    - type: ShowJobIcons
+    - type: ShowMindShieldIcons
+    - type: ShowCriminalRecordIcons
+
+- type: entity
+  parent: BaseCyberneticEyes
+  id: MedicalCyberneticEyes
+  name: cybernetic diagnostic eyes
+  description: A pair of cybernetic eyes that enhance your vision, featuring an integrated MedHUD.
+  components:
+  - type: Organ
+    onAdd:
+    - type: FlashImmunity
+    - type: EyeProtection
+    - type: ShowHealthBars
+      damageContainers:
+      - Biological
+    - type: ShowHealthIcons
+      damageContainers:
+      - Biological
+
+# cybernetic lungs
+  # Can breath any gas, thaven style?
+- type: entity
+  id: CyberneticLungs
+  parent: BaseCyberneticOrgan
+  name: cybernetic lungs
+  description: "A set of cybernetic lungs that can process any kind of atmosphere."
+  components:
+  - type: Sprite
+    layers:
+      - state: cybernetic-lung-l
+      - state: cybernetic-lung-r
+  - type: Lung
+  - type: Organ
+    slotId: lungs
+  - type: Item
+    size: Normal
+    shape:
+    - 0,0,1,1
+    heldPrefix: lungs
+  - type: Metabolizer
+    removeEmpty: true
+    solutionOnBody: false
+    solution: "Lung"
+    metabolizerTypes: [Thaven] # The cybernetic lungs are effectively just thaven lungs.
+    groups:
+    - id: Gas
+      rateModifier: 100.0
+  - type: SolutionContainerManager
+    solutions:
+      Lung:
+        maxVol: 100.0
+        canReact: false
+  - type: Tag
+    tags:
+    - Lungs
+
+# cybernetic heart
+  # Auto defib?
+- type: entity
+  id: CyberneticHeart
+  parent: BaseCyberneticOrgan
+  name: cybernetic heart
+  description: "A cybernetic heart" # Update description!
+  components:
+  - type: Sprite
+    state: cybernetic-heart-on
+  - type: Heart
+  - type: Organ
+    slotId: heart
+    onAdd:
+    - type: AutoDefib
+      autoDefibHeal:
+        types:
+          Asphyxiation: -40
+    - type: DoAfter
+  - type: Item
+    size: Tiny
+    heldPrefix: heart
+  - type: Metabolizer
+    maxReagents: 3
+    metabolizerTypes: [Human]
+    groups:
+    - id: Medicine
+    - id: Poison
+    - id: Narcotic
+  - type: Tag
+    tags:
+    - Heart
+
+# cybernetic stomach
+  # can eat any food?
+- type: entity
+  parent: BaseCyberneticOrgan
+  id: CyberneticStomach
+  name: cybernetic stomach
+  description: "A cybernetic stomach that can process any food."
+  components:
+    - type: Sprite
+      state: cybernetic-stomach
+    - type: Stomach
+      specialDigestible: # Any food groups that can be processed by other species.
+        tags:
+        - Fruit
+        - ReptilianFood
+        - Meat
+        - Pill
+        - Crayon
+        - Paper
+        - ClothMade
+        - Paper
+    - type: Organ
+      slotId: stomach
+    - type: Item
+      size: Normal
+      shape:
+      - 0,0,1,1
+      heldPrefix: stomach
+    - type: SolutionContainerManager
+      solutions:
+        stomach:
+          maxVol: 50
+    - type: Metabolizer
+      maxReagents: 3
+      metabolizerTypes: [Human, Reptilian, Moth]
+      groups:
+      - id: Food
+      - id: Drink
+    - type: Tag
+      tags:
+      - Stomach
+
+# cybernetic liver
+  # Alcohol/poison resist?
+- type: entity
+  parent: BaseCyberneticOrgan
+  id: CyberneticLiver
+  name: cybernetic liver
+  description: "A cybernetic liver that rapidly neutralizes harmful chemicals in the bloodstream."
+  components:
+  - type: Sprite
+    state: cybernetic-liver
+  - type: Liver
+  - type: Organ
+    slotId: liver
+  - type: Item
+    size: Small
+    shape:
+      - 0,0,1,1
+    heldPrefix: liver
+  - type: Metabolizer # The cybernetic liver metabolizes both alcohol and poisons extremely quickly, preventing reagent buildup.
+    maxReagents: 3
+    metabolizerTypes: [Human] # Can create a new metabolizer type for cybernetics if further functionality is wanted.
+    groups:
+    - id: Alcohol
+      rateModifier: 2.0
+    - id: Poison
+      rateModifier: 8.0 # Poisons have to be cleared much faster to avoid the negative effects than ethanol does.
+  - type: Tag
+    tags:
+    - Liver
+
+- type: entity
+  parent: MobHuman
+  id: MobHumanCyborg
+  name: Urist McCyborg
+  components:
+  - type: Body
+    prototype: HumanCyborg
+
+- type: body
+  id: HumanCyborg
+  name: "cyborg"
+  root: torso
+  slots:
+    head:
+      part: HeadHuman
+      connections:
+      - torso
+      organs:
+        brain: OrganHumanBrain
+        eyes: BasicCyberneticEyes
+    torso:
+      part: TorsoHuman
+      connections:
+      - right arm
+      - left arm
+      - right leg
+      - left leg
+      - head # Shitmed
+      organs:
+        heart: CyberneticHeart
+        lungs: CyberneticLungs
+        stomach: CyberneticStomach
+        liver: CyberneticLiver
+        kidneys: OrganHumanKidneys
+    right arm:
+      part: JawsOfLifeRightArm
+      connections:
+      - right hand
+    left arm:
+      part: JawsOfLifeLeftArm
+      connections:
+      - left hand
+    right hand:
+      part: RightHandCybernetic
+    left hand:
+      part: LeftHandCybernetic
+    right leg:
+      part: SpeedRightLeg
+      connections:
+      - right foot
+    left leg:
+      part: SpeedLeftLeg
+      connections:
+      - left foot
+    right foot:
+      part: RightFootCybernetic
+    left foot:
+      part: LeftFootCybernetic
